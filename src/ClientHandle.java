@@ -32,20 +32,19 @@ public class ClientHandle implements Runnable {
     public void run() {
         try (output; input) {
             String str;
+            Message msg;
             output.write("200/Connected" + System.lineSeparator());
             output.flush();
             while (!(str = input.readLine()).equalsIgnoreCase(QUIT)) {
-                String[] req = str.split("/");
-                int opCode;
-                if (req.length != 2 || (opCode = isNumeric(req[0])) < 0 || opCode >= operations.size()) {
+                msg = new Message(str);
+                if (!msg.isValid() || msg.getCode() >= operations.size()) {
                     output.write("400/Malformed Request" + System.lineSeparator());
                     output.flush();
                     continue;
                 }
-                Operation op = operations.get(opCode);
-                String[] body = req[1].split(";");
+                Operation op = operations.get(msg.getCode());
                 String resp = "200/";
-                for (String i : body) {
+                for (String i : msg.getBody()) {
                     resp += op.process(i) + ";";
                 }
                 output.write(resp + System.lineSeparator());

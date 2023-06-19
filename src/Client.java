@@ -10,12 +10,14 @@ public class Client {
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));) {
             String str;
+            Message msg;
             while (true) {
                 str = in.readLine();
-                String[] resp = str.split("/");
-                System.out.println("Status Code: " + resp[0]);
-                String[] results = resp[1].split(";");
-                Arrays.stream(results).forEach((res) -> System.out.println(res));
+                msg = new Message(str);
+                //String[] resp = str.split("/");
+                System.out.println("Status Code: " + msg.getCode());
+                //String[] results = resp[1].split(";");
+                Arrays.stream(msg.getBody()).forEach((line) -> System.out.println(line));
                 System.out.print("Command: ");
                 System.out.flush();
                 str = user.readLine();
